@@ -120,6 +120,60 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1 &58966753 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5407968007786445911, guid: ce2e34029942daa4c845cd2ceec80c14,
+    type: 3}
+  m_PrefabInstance: {fileID: 7294522663246278166}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &58966754
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 58966753}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 19bb8ccb8197bea449c604dd0fd511e3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  shardShader: {fileID: 4800000, guid: 7f38ce3528c65d84d954e0b8125023a1, type: 3}
+  breaking: 0
+  curve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0.22618687
+      outSlope: 0.22618687
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0.15084454
+    - serializedVersion: 3
+      time: 0.82950383
+      value: 0.4644114
+      inSlope: 1.8506097
+      outSlope: 1.8506097
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 3.141353
+      outSlope: 3.141353
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  window: {fileID: 1498448412}
 --- !u!1 &254464183
 GameObject:
   m_ObjectHideFlags: 0
@@ -133,7 +187,6 @@ GameObject:
   - component: {fileID: 254464188}
   - component: {fileID: 254464187}
   - component: {fileID: 254464186}
-  - component: {fileID: 254464185}
   m_Layer: 9
   m_Name: Cube (2)
   m_TagString: Untagged
@@ -155,19 +208,6 @@ Transform:
   m_Father: {fileID: 897125180251002552}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 22.059002, y: 101.65401, z: 124.41301}
---- !u!114 &254464185
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 254464183}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4b18d1e7935d95c4b8c7f5b5df11efe1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  mirror: {fileID: 962236879}
 --- !u!64 &254464186
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -992,7 +1032,6 @@ GameObject:
   - component: {fileID: 1223895891}
   - component: {fileID: 1223895893}
   - component: {fileID: 1223895890}
-  - component: {fileID: 1223895894}
   m_Layer: 9
   m_Name: Cube (1)
   m_TagString: Untagged
@@ -1092,19 +1131,6 @@ MonoBehaviour:
   prompt: Press E to Pick Up
   oldParent: {fileID: 0}
   dissolves: 0
---- !u!114 &1223895894
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1223895888}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4b18d1e7935d95c4b8c7f5b5df11efe1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  mirror: {fileID: 962236879}
 --- !u!1 &1244741726
 GameObject:
   m_ObjectHideFlags: 0
@@ -1692,7 +1718,6 @@ GameObject:
   - component: {fileID: 1572656238}
   - component: {fileID: 1572656237}
   - component: {fileID: 1572656236}
-  - component: {fileID: 1572656235}
   m_Layer: 9
   m_Name: Cube (2)
   m_TagString: Untagged
@@ -1714,19 +1739,6 @@ Transform:
   m_Father: {fileID: 4538974044078226971}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: -4.7320004, y: 87.65301, z: 113.481}
---- !u!114 &1572656235
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1572656233}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4b18d1e7935d95c4b8c7f5b5df11efe1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  mirror: {fileID: 962236879}
 --- !u!64 &1572656236
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -2255,6 +2267,7 @@ MonoBehaviour:
   entangledWorldContainer: {fileID: 7515926175239197052}
   heartClippables: []
   realClippables: []
+  mirrorClippables: []
 --- !u!4 &6354875879375548175
 Transform:
   m_ObjectHideFlags: 0
@@ -2279,6 +2292,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 5407968008035840471, guid: ce2e34029942daa4c845cd2ceec80c14,
+        type: 3}
+      propertyPath: m_Name
+      value: Player
+      objectReference: {fileID: 0}
     - target: {fileID: 5407968008035840465, guid: ce2e34029942daa4c845cd2ceec80c14,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -2334,21 +2352,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 5407968008035840471, guid: ce2e34029942daa4c845cd2ceec80c14,
-        type: 3}
-      propertyPath: m_Name
-      value: Player
-      objectReference: {fileID: 0}
-    - target: {fileID: 8854909899827168894, guid: ce2e34029942daa4c845cd2ceec80c14,
-        type: 3}
-      propertyPath: mirror
-      value: 
-      objectReference: {fileID: 962236878}
-    - target: {fileID: 5407968008035840464, guid: ce2e34029942daa4c845cd2ceec80c14,
-        type: 3}
-      propertyPath: heartWindow
-      value: 
-      objectReference: {fileID: 1498448412}
     - target: {fileID: 5407968007786445906, guid: ce2e34029942daa4c845cd2ceec80c14,
         type: 3}
       propertyPath: rampLength
@@ -2399,6 +2402,21 @@ PrefabInstance:
       propertyPath: rampTarget
       value: 2.4
       objectReference: {fileID: 0}
+    - target: {fileID: 5407968007786445906, guid: ce2e34029942daa4c845cd2ceec80c14,
+        type: 3}
+      propertyPath: screenMat
+      value: 
+      objectReference: {fileID: 2100000, guid: bb4f6046c216a80478b17923cad427a0, type: 2}
+    - target: {fileID: 5407968008035840464, guid: ce2e34029942daa4c845cd2ceec80c14,
+        type: 3}
+      propertyPath: heartWindow
+      value: 
+      objectReference: {fileID: 1498448412}
+    - target: {fileID: 8854909899827168894, guid: ce2e34029942daa4c845cd2ceec80c14,
+        type: 3}
+      propertyPath: mirror
+      value: 
+      objectReference: {fileID: 962236878}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: ce2e34029942daa4c845cd2ceec80c14, type: 3}
 --- !u!4 &7515926175239197052
@@ -2423,6 +2441,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 4037872479478507743, guid: 584309737b83dd34496c239b4a574f67,
+        type: 3}
+      propertyPath: m_Name
+      value: DeathPlane
+      objectReference: {fileID: 0}
     - target: {fileID: 4037872479478507742, guid: 584309737b83dd34496c239b4a574f67,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -2477,11 +2500,6 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4037872479478507743, guid: 584309737b83dd34496c239b4a574f67,
-        type: 3}
-      propertyPath: m_Name
-      value: DeathPlane
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 584309737b83dd34496c239b4a574f67, type: 3}
