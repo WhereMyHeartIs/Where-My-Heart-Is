@@ -14,13 +14,11 @@ public class ApplyMask : MonoBehaviour
     ///<summary> Reference to Heart World Cam, temp Mask Cam </summary>
     [HideInInspector] public Camera heartCam, maskCam, mainCam;
 	///<summary> Shader that combines views </summary>
-	[SerializeField] Shader transition = default;
-
+	[SerializeField] Shader merge = default, transition = default;
 	///<summary> Generated material for screen shader </summary>
 	public Material screenMat;
-
 	[HideInInspector] public Material transitionMat;
-	///<summary> Generated RenderTexture for Heart World </summary>
+	///<summary> Gene()rated RenderTexture for Heart World </summary>
 	public RenderTexture heart;
     
 	[SerializeField] Texture2D dissolveTexture = default;
@@ -51,12 +49,9 @@ public class ApplyMask : MonoBehaviour
 
 
 
-    private Texture2D mask2D;
-
-
-
     void Start()
 	{
+		screenMat = new Material(merge);
 		_HeartID = Shader.PropertyToID("_Heart");
 
 		// get ref to heart world cam and assign generated RenderTexture
@@ -73,10 +68,7 @@ public class ApplyMask : MonoBehaviour
 
         breathIn = false;
 
-        mask = new RenderTexture(Screen.width, Screen.height, 16, RenderTextureFormat.Default);//RenderTexture.GetTemporary(Screen.width, Screen.height, 16);
-        mask.name = "Internal Mask";
-        RenderMask();
-
+        CreateMask();
 		screenMat.SetTexture("_HatchTex", hatchTexture);
 		screenMat.SetTexture("_Background", birdBackground);
 		// screenMat.SetColor("_DepthOutlineColour", Color.white);
@@ -98,12 +90,11 @@ public class ApplyMask : MonoBehaviour
 
             //ripple = true;
         }
-
-        //RenderMask();
     }
 
     public void CopyInto(ApplyMask target)
     {
+        target.merge = this.merge;
         target.transition = this.transition;
         target.screenMat = this.screenMat;
         target.transitionMat = this.transitionMat;
@@ -116,21 +107,11 @@ public class ApplyMask : MonoBehaviour
         rippleStartTime = Time.time;
     }
 
-
-    private void SetMask(RenderTexture nextMask)
-    {
-        RenderTexture screen = RenderTexture.active;
-        RenderTexture.active = nextMask;
-
-        // copy to Texture2D and pass to shader
-        mask2D.ReadPixels(new Rect(0, 0, nextMask.width, nextMask.height), 0, 0);
-        mask2D.Apply();
-        Shader.SetGlobalTexture("_Mask", mask2D);
-        RenderTexture.active = screen;
-    }
-
-    public void RenderMask()
+	public void CreateMask()
 	{
+		mask = new RenderTexture(Screen.width, Screen.height, 16, RenderTextureFormat.Default);//RenderTexture.GetTemporary(Screen.width, Screen.height, 16);
+        mask.name = "Internal Mask";
+
 		// spawn temp mask cam and configure transform
 		maskCam = new GameObject("Mask Cam").AddComponent<Camera>();
 		//(maskCam.transform.position, maskCam.transform.eulerAngles) = (Vector3.zero, Vector3.zero);
@@ -254,7 +235,19 @@ public class ApplyMask : MonoBehaviour
         // GL.ClearWithSkybox(true, mainCam);
     }
 
-   
+    private Texture2D mask2D;
+
+    private void SetMask(RenderTexture nextMask)
+    {
+        RenderTexture screen = RenderTexture.active;
+        RenderTexture.active = nextMask;
+
+        // copy to Texture2D and pass to shader
+        mask2D.ReadPixels(new Rect(0, 0, nextMask.width, nextMask.height), 0, 0);
+        mask2D.Apply();
+        Shader.SetGlobalTexture("_Mask", mask2D);
+		RenderTexture.active = screen;
+    }
 
 	void ClearRT(RenderTexture r, Camera cam)
 	{
