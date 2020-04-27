@@ -46,7 +46,7 @@ public class World : MonoBehaviour
 	{
 		heartWorldContainer = transform.Find("Heart World");
 		realWorldContainer = transform.Find("Real World");
-		entangledWorldContainer = GetComponentInChildren<EntangledObjectManager>().transform;
+		entangledWorldContainer = GetComponentInChildren<EntangledObjectManager>().transform; // TODO: decouple EntangledObjectManager
 
 		ConfigureWorld("Heart", heartWorldContainer);
 		ConfigureWorld("Real", realWorldContainer);

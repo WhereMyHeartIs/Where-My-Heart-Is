@@ -2,8 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 
+using FMOD;
+
 using UnityEngine;
 using UnityEngine.UI;
+using Debug = UnityEngine.Debug;
 
 /// <summary> Handles player behaviors. </summary>
 [System.Serializable]
@@ -14,8 +17,10 @@ public class Player : Singleton<Player>, IStateMachine
 
 	/// <summary> Reference to the players last spawn. </summary>
 	[HideInInspector] public Transform lastSpawn;
-	/// <summary> Reference to player CharacterController. </summary>
-	[HideInInspector] public CharacterController characterController;
+	/// <summary> Reference to player rigidbody. </summary>
+	[HideInInspector] public Rigidbody body;
+	/// <summary> Reference to player collider. </summary>
+	[HideInInspector] public CapsuleCollider playerCollider;
 	/// <summary> Reference to player Camera. </summary>
 	[HideInInspector] public Camera cam;
 	/// <summary> Reference to FX Controller. </summary>
@@ -38,9 +43,6 @@ public class Player : Singleton<Player>, IStateMachine
 	/// <summary> Whether the player is still crouching after the crouch key has been let go. </summary>
 	private bool stillCrouching = false;
 	public bool pickedUpFirst = false;
-
-	/// <summary> Vector3 to store and calculate move direction. </summary>
-	private Vector3 moveDirection;
 
 	// [Header("Game Object References")]
 	/// <summary> Reference to heart window. </summary>
@@ -77,7 +79,8 @@ public class Player : Singleton<Player>, IStateMachine
 
 	void Start()
 	{
-		characterController = GetComponent<CharacterController>();
+		playerCollider = GetComponentInChildren<CapsuleCollider>();
+		body = GetComponent<Rigidbody>();
 		cam = GetComponentInChildren<Camera>();
 		VFX = cam.GetComponent<Effects>();
 		window = GetComponent<Window>();
@@ -86,8 +89,8 @@ public class Player : Singleton<Player>, IStateMachine
 		hands = GetComponentInChildren<Hands>();
 		prompt = GameManager.Instance.prompt;
 
-		// Get reference to the player height using the CharacterController's height.
-		playerHeight = characterController.height;
+		playerHeight = playerCollider.height;
+
 		// Creates an empty game object at the position where a held object should be.
 		heldObjectLocation = new GameObject("HeldObjectLocation").transform;
 		heldObjectLocation.position = cam.transform.position + cam.transform.forward;
@@ -119,9 +122,7 @@ public class Player : Singleton<Player>, IStateMachine
 	}
 
 	public override void OnExitScene()
-	{
-		characterController.enabled = false;
-	}
+	{ }
 
 	public override void OnEnterScene()
 	{
@@ -135,7 +136,6 @@ public class Player : Singleton<Player>, IStateMachine
 		}
 
 		Initialize();
-		characterController.enabled = true;
 		VFX.StartFade(true, fadeDuration);
 	}
 
@@ -189,13 +189,11 @@ public class Player : Singleton<Player>, IStateMachine
 			if (canMove)
 			{
 				Move();
-				ApplyGravity();
 				Rotate();
-				characterController.Move(moveDirection);
+				AdjustGravity();
 			}
 
 			prompt.UpdateText(); // non physics
-			// StuckCrouching();
 			Die();
 		}
 	}
@@ -225,36 +223,29 @@ public class Player : Singleton<Player>, IStateMachine
 	/// <summary> Moves and applies gravity to the player using Horizonal and Vertical Axes. </summary>
 	private void Move()
 	{
-		moveDirection = Input.GetAxis("Vertical") * transform.forward + Input.GetAxis("Horizontal") * transform.right;
-		Vector3 horizontal = characterController.velocity - characterController.velocity.y * Vector3.up;
-		audioController.SetWalkingVelocity(Mathf.RoundToInt(horizontal.magnitude) / speed);
-		moveDirection *= speed * Time.deltaTime;
-	}
+		Vector3 targetVelocity = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
+		targetVelocity = transform.TransformDirection(targetVelocity);
+		targetVelocity *= speed;
 
-	/// <summary> Applies gravity to the player and includes jump. </summary>
-	private void ApplyGravity()
-	{
-		if (!characterController.isGrounded)
-			verticalVelocity -= gravity * Time.deltaTime;
-		moveDirection.y = verticalVelocity * Time.deltaTime;
+		Vector3 velocity = body.velocity;
+		Vector3 velocityChange = (targetVelocity - velocity);
+		velocityChange.x = Mathf.Clamp(velocityChange.x, -10f, 10f);
+		velocityChange.z = Mathf.Clamp(velocityChange.z, -10f, 10f);
+		velocityChange.y = 0;
+		body.AddForce(velocityChange, ForceMode.VelocityChange);
 	}
 
 	/// <summary> Player jump function. </summary>
 	private void Jump()
 	{
-		if (characterController.isGrounded)
-		{
-			verticalVelocity = jumpForce;
-			audioController.JumpLiftoff();
+		if (IsGrounded()) body.AddForce(Vector3.up * jumpForce, ForceMode.VelocityChange);
+	}
 
-			// Landing sound.
-			int mask = ~gameObject.layer;
-			Physics.Raycast(new Ray(transform.position, Vector3.down), out RaycastHit hit, 5f, mask);
-			if (verticalVelocity < 0 && hit.distance < audioController.landingDistanceThreshold)
-			{
-				audioController.JumpLanding();
-			}
-		}
+	/// <summary> Increases gravity while falling. </summary>
+	/// <remarks> Used to create better feeling jump arc. </remarks>
+	private void AdjustGravity()
+	{
+		if (!IsGrounded() && body.velocity.y < 0) body.AddForce(new Vector3(0, -10f, 0));
 	}
 
 	/// <summary> Rotates the player and camera based on mouse movement. </summary>
@@ -276,13 +267,6 @@ public class Player : Singleton<Player>, IStateMachine
 			cam.transform.localEulerAngles = new Vector3(-rotation.x, 0, 0);
 
 			Shader.SetGlobalVector(_ViewDirID, cam.transform.forward.normalized);
-
-			// Allow the player to get out of the mouse lock.
-			/*if (Input.GetKey(KeyCode.Escape))
-			{
-				Cursor.lockState = CursorLockMode.None;
-				Cursor.visible = true;
-			}*/
 		}
 	}
 
@@ -366,6 +350,11 @@ public class Player : Singleton<Player>, IStateMachine
 			VFX.ToggleMask(false);
 			EndState();
 		}
+	}
+	public bool IsGrounded()
+	{
+		RaycastHit ray;
+		return Physics.SphereCast(playerCollider.transform.position, 0.2f, Vector3.down, out ray, playerHeight / 2 - 0.1f);
 	}
 
 	public InteractableObject RaycastInteractable() => Physics.Raycast(cam.transform.position, cam.transform.forward, out RaycastHit hit, playerReach, 1 << 9) ? hit.transform.GetComponent<InteractableObject>() : null;

@@ -46,6 +46,7 @@ Material:
     - _Dissolve: 0
     - _FresnelExponent: 0.5
     - _Glossiness: 0
+    - _LightAttenBias: 25
     - _Metallic: 0
     - _PaperStrength: 0.4
     - _Smoothness: 0

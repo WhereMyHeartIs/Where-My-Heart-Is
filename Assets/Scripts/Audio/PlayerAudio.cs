@@ -50,11 +50,11 @@ public class PlayerAudio : MonoBehaviour
 	{
 		if (jumping)
 		{
-			if (Player.Instance.characterController.isGrounded)
+			/*if (Player.Instance.characterController.isGrounded)
 			{
 				jumping = false;
 				JumpLanding();
-			}
+			}*/
 		}
 		if (Physics.Raycast(transform.position, Vector3.down, out RaycastHit hit, Mathf.Infinity, 1 << 9))
 		{

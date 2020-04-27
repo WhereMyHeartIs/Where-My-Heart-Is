@@ -14,21 +14,20 @@
 		_PaperStrength ("Paper Strength", Range(0,1)) = 1
 		_BlotchMulti ("Blotch Multiply", Range(0,16)) = 4
 		_BlotchSub ("Blotch Subtract", Range(0,8)) = 2
+		_BlotchWorldScale ("Blotch World Scale", Range(0, 1)) = 0.2// testing world uv indexing
 
-		[PowerSlider(8)] _FresnelExponent ("Fresnel Exponent", Range(0, 4)) = 1
+		[PowerSlider(2)] _AttenExponent ("Attenuation Exponent", Range(0, 2)) = 1
 
-		_Dissolve ("Dissolve", int) = 0
+		// _Dissolve ("Dissolve", int) = 0
+		// _LightAttenBias ("Inverse Light Factor", Range(0,30)) = 25
 	}
 	SubShader {
 		Tags { "RenderType"="Opaque" "LightMode"="ForwardBase"}
 		LOD 200
 
-		// Blend SrcAlpha OneMinusSrcAlpha
-
 		CGPROGRAM
-		#pragma surface surf BlinnPhong noforwardadd nolightmap vertex:vert
-		#pragma target 3.5
-		// #pragma debug
+		#pragma surface surf BlinnPhong noforwardadd nolightmap vertex:vert finalcolor:colour
+		#pragma target 3.0
 
 		#pragma multi_compile_local __ DISSOLVE DISSOLVE_MANUAL
 
@@ -39,18 +38,27 @@
 		half _BlotchSub;
 		half _TintScale;
 		half _PaperStrength;
+		half _BlotchWorldScale;// testing world uv indexing
 		fixed4 _Color, _Color2, _InkCol;
-		half _FresnelExponent;
+		half _AttenExponent;
 
-		int _Dissolve;
+		// int _Dissolve;
 		float3 _ViewDir;
 		float _ManualDissolve;
 
+		float _LightAttenBias;
+
 		struct Input {
-			float2 uv_BlotchTex, uv_DetailTex, uv_PaperTex;
-			float2 uv_RampTex;
-			float3 worldNormal, worldPos;
-			float3 lightDir;
+			float2 uv_BlotchTex : TEXCOORD0;
+			float2 uv_DetailTex : TEXCOORD1;
+			float2 uv_PaperTex : TEXCOORD2;
+			float2 uv_RampTex : TEXCOORD3;
+			float3 worldNormal;
+			//#if DISSOLVE
+			float3 worldPos;
+			//#endif
+			// float3 lightDir;
+			float4 lightColour;
 			float lightAtten;
 		};
 
@@ -71,9 +79,13 @@
 			UNITY_INITIALIZE_OUTPUT(Input, o);
 			float4 worldPos = mul(unity_ObjectToWorld, v.vertex);
 
-			float3 lightDir = float3(0, 0, 0);
+			// float3 lightDir = float3(0, 0, 0);
+			float4 lightColour = float4(0, 0, 0, 0);
 			float lightAtten = 0;
 			int lights = 4;
+
+			// _WorldSpaceLightPos0 // direction of dir light, w = 0 if dir light, else 1
+			// UnityWorldSpaceLightDir() // _WorldSpaceLightPos0.xyz - worldPos * _WorldSpaceLightPos0.w;
 			
 			for(int i = 0; i < 4; i++) {
 				float3 lightPos = float3(unity_4LightPosX0[i], unity_4LightPosY0[i], unity_4LightPosZ0[i]);
@@ -81,53 +93,72 @@
 					lights--;
 					continue;
 				}
-				lightDir += normalize(lightPos - worldPos);
-				lightAtten += (1 - unity_4LightAtten0[i]) * length(unity_LightColor[0]);
-				// lightAtten += length(unity_LightColor[0]);
-			}
-			o.lightDir = lightDir / lights;
-			o.lightAtten = lightAtten / lights;
-			// o.lightDir = normalize(lightDir);
+				float3 vertToLight = lightPos - worldPos;
+				// lightDir += normalize(vertToLight);
 
-			// bgolus god fix
-			// float range = (0.005 * sqrt(1000000 - unity_4LightAtten0[0]])) / sqrt(unity_4LightAtten0[0]]);
-			// float attenUV = distance(lightPos, worldPos) / range;
-			// float atten = saturate(1.0 / (1.0 + 25.0 * attenUV*attenUV) * saturate((1 - attenUV) * 5.0));
-			// float atten = tex2D(_LightTextureB0, (attenUV * attenUV).xx).UNITY_ATTEN_CHANNEL;
+				// float normDist = unity_4LightAtten0[i] * length(vertToLight, vertToLight);
+				float normMag = unity_4LightAtten0[i] * unity_4LightAtten0[i] * dot(vertToLight, vertToLight); // normDist^2
+				// lightAtten += 1 / (1 + _LightAttenBias * normDist * normDist);
+				float atten = 1.0 / (1.0 + _LightAttenBias * normMag) * saturate((1 - sqrt(normMag)) * 5.0);
+
+				// lightColour.w += 1.0 / (1.0 + _LightAttenBias * normMag) * saturate((1 - sqrt(normMag)) * 5.0);
+				// lightColour.xyz += unity_LightColor[i].xyz * unity_LightColor[i].a;
+				lightAtten += atten;
+				lightColour += unity_LightColor[i] * atten;
+			}
+			// o.lightDir = lightDir / lights;
+
+			// o.lightColour = float4(lightColour.xyz / lights, saturate(lightColour.w));
+			o.lightColour = lightColour / lights;
+			o.lightAtten = saturate(lightAtten);
+
+			// o.lightDir = normalize(lightDir);
 		}
 
 		void surf (Input IN, inout SurfaceOutput o) {
 			#if DISSOLVE
-				if(_Dissolve == 1) {
+				// if(_Dissolve == 1) {
 					float camDist = distance(IN.worldPos, _WorldSpaceCameraPos + float3(_ViewDir.x, max(0, _ViewDir.y), _ViewDir.z));
 					float isVisible = tex2D(_DetailTex, IN.uv_DetailTex).r * 0.999 - exp(-camDist);
-					clip(isVisible);
-				}
+					clip(isVisible); // TODO: set by alpha instead?
+				// }
 			#elif DISSOLVE_MANUAL
 				float isVisible = tex2D(_DetailTex, IN.uv_DetailTex).r * 0.999 - _ManualDissolve;
 				clip(isVisible);
 			#endif
 
-			fixed c = tex2D (_BlotchTex, IN.uv_BlotchTex).r;
+			float2 worldUV = float2(((IN.worldPos.x + IN.worldPos.y) * _BlotchWorldScale) % 1, ((IN.worldPos.z + IN.worldPos.y) * _BlotchWorldScale) % 1);
+
+
+			//fixed c = tex2D(_BlotchTex, IN.uv_BlotchTex).r;
+			fixed c = tex2D (_BlotchTex, worldUV).r;
 			c *= _BlotchMulti;
 			c -= _BlotchSub;			
-			c *= tex2D (_DetailTex, IN.uv_DetailTex).r;			
+			//c *= tex2D(_DetailTex, IN.uv_DetailTex).r;
+			c *= tex2D (_DetailTex, worldUV).r;
 
-			float f = (1 - dot(IN.worldNormal, IN.lightDir)) * IN.lightAtten;
-			f = pow(f, _FresnelExponent);
+			// float lightAtten = IN.lightColour.w;
+			float lightAtten = IN.lightAtten;
+			// float f = (1 - dot(IN.worldNormal, IN.lightDir)) * lightAtten;
+			float f = lightAtten;
+			f = pow(f, _AttenExponent);
 
 			c = saturate(c * .3 + f);
 			c = tex2D (_RampTex, half2(1 - c, 0)).r;
 			c = saturate(c);
 
-			fixed4 tint = tex2D (_BlotchTex, IN.uv_BlotchTex / _TintScale);	
-			tint = lerp(_Color, _Color2, tint.r);
+
+			//fixed4 tint = tex2D (_BlotchTex, IN.uv_BlotchTex / _TintScale);	
+			fixed4 tint = tex2D (_BlotchTex, worldUV / _TintScale);
+			tint = lerp(_Color, _Color2, tint.r)  + IN.lightColour * f;
 			
 			fixed4 ink = screen(_InkCol, fixed4(c, c, c, 1));
 
 			o.Albedo = lerp(ink * tint, softlight(tex2D (_PaperTex, IN.uv_PaperTex), ink * tint), _PaperStrength);
-			// o.Albedo = IN.lightDir * IN.lightAtten;
-			// o.Albedo = dot(IN.worldNormal, IN.lightDir);
+		}
+
+		void colour(Input IN, SurfaceOutput o, inout fixed4 color) {
+			// color += IN.lightColour;
 		}
 		ENDCG
 	}

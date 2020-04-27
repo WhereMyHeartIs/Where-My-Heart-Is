@@ -95,9 +95,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 496e2ae2f248e934b924c4b926615c06, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  merge: {fileID: 4800000, guid: c26889c33fef9234c9d79ce663593d15, type: 3}
   transition: {fileID: 4800000, guid: 203e6b86e7f730c43b8f1ff3d99b9270, type: 3}
-  screenMat: {fileID: 0}
+  screenMat: {fileID: 2100000, guid: c53449d5837faf241a98b51503472aec, type: 2}
   transitionMat: {fileID: 0}
   dissolveTexture: {fileID: 2800000, guid: 27652fb6e8e6045458cfd167c5531c0b, type: 3}
   hatchTexture: {fileID: 2800000, guid: 20380a70eb5449b4cbc4a28fae0ae07a, type: 3}
@@ -116,6 +115,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   waveController: {fileID: 0}
   defaultGlowMat: {fileID: 2100000, guid: 30bc59854c5535f4494b3eeedaacafce, type: 2}
+  lightPower: 5
 --- !u!114 &3203434368716650614
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -153,7 +153,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b5f860fa0d5f69d4a9596cca24bc1e54, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  waveColour: {r: 0, g: 0, b: 1, a: 1}
+  waveColour: {r: 1, g: 1, b: 1, a: 1}
   waveDistance: 0
 --- !u!45 &6582717167106706068
 Skybox:
@@ -329,6 +329,16 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2182867183277312571, guid: 363b9a74c27aeba43ab8c35665f02ff7,
+        type: 3}
+      propertyPath: limitTo
+      value: -1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2182867183277312571, guid: 363b9a74c27aeba43ab8c35665f02ff7,
+        type: 3}
+      propertyPath: limitTo
+      value: -1
+      objectReference: {fileID: 0}
     - target: {fileID: 2182867183277312575, guid: 363b9a74c27aeba43ab8c35665f02ff7,
         type: 3}
       propertyPath: m_Enabled
@@ -344,25 +354,15 @@ PrefabInstance:
       propertyPath: m_Enabled
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 8454981881868834941, guid: 363b9a74c27aeba43ab8c35665f02ff7,
-        type: 3}
-      propertyPath: m_Materials.Array.data[0]
-      value: 
-      objectReference: {fileID: 0}
     - target: {fileID: 2182867183277312572, guid: 363b9a74c27aeba43ab8c35665f02ff7,
         type: 3}
       propertyPath: m_Enabled
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 2182867183277312571, guid: 363b9a74c27aeba43ab8c35665f02ff7,
+    - target: {fileID: 8454981881868834941, guid: 363b9a74c27aeba43ab8c35665f02ff7,
         type: 3}
-      propertyPath: limitTo
-      value: -1
-      objectReference: {fileID: 0}
-    - target: {fileID: 2182867183277312571, guid: 363b9a74c27aeba43ab8c35665f02ff7,
-        type: 3}
-      propertyPath: limitTo
-      value: -1
+      propertyPath: m_Materials.Array.data[0]
+      value: 
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 2182867183277312572, guid: 363b9a74c27aeba43ab8c35665f02ff7, type: 3}
@@ -386,11 +386,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 3177498603613522796}
     m_Modifications:
-    - target: {fileID: 670550455639107771, guid: 829cb5a1c85a1974a8e0b7644f33c31d,
-        type: 3}
-      propertyPath: m_Name
-      value: Hands
-      objectReference: {fileID: 0}
     - target: {fileID: 4545574372278966952, guid: 829cb5a1c85a1974a8e0b7644f33c31d,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -445,6 +440,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 80.96
+      objectReference: {fileID: 0}
+    - target: {fileID: 670550455639107771, guid: 829cb5a1c85a1974a8e0b7644f33c31d,
+        type: 3}
+      propertyPath: m_Name
+      value: Hands
       objectReference: {fileID: 0}
     - target: {fileID: 1382892172470704661, guid: 829cb5a1c85a1974a8e0b7644f33c31d,
         type: 3}

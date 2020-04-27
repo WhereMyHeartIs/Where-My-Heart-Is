@@ -39,7 +39,7 @@ public class ClippableObject : MonoBehaviour
 
     private CSG.Model stagedModel;
 
-	void Awake()
+	protected void Awake()
 	{
 		isClipped = false;
 
@@ -48,6 +48,7 @@ public class ClippableObject : MonoBehaviour
 		if (!this.TryComponent<MeshCollider>())
 			gameObject.AddComponent<MeshCollider>();
 		initialMesh = meshFilter.mesh;
+
 		oldLayer = gameObject.layer;
 	}
 

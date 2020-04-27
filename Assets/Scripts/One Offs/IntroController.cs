@@ -25,7 +25,7 @@ public class IntroController : MonoBehaviour
 		canvas.OnInteract += PlayTheme;
 		player.canMove = false;
 		player.windowEnabled = true;
-		player.characterController.Move(Vector3.zero);
+		//player.characterController.Move(Vector3.zero);
 		player.prompt.SetText("Press and hold Right Click or Left CTRL to Open Lens");
 		InputManager.OnAltAimKeyDown += SetPrompt;
 		InputManager.OnRightClickDown += SetPrompt;

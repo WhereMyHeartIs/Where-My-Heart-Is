@@ -23,6 +23,10 @@ Shader "Mask/Merge"
 		_WaveTrail ("Length of the trail", Range(0,5)) = 1
 		_WaveColour ("Colour", Color) = (1, 1, 1, 1)
 
+		[Header(Fog)]
+		_FogExponent("Fog distance exponent", float) = 4
+		_FogColor("Fog color", color) = (1, 1, 1, 1)
+
 		_Background ("Texture", 2D) = "white" {}
 	}
 	SubShader {
@@ -45,6 +49,7 @@ Shader "Mask/Merge"
 			#pragma multi_compile __ BOIL
 			#pragma multi_compile __ WAVE
 			#pragma multi_compile __ BIRD
+			#pragma multi_compile __ FOG
 			// #pragma multi_compile __ BLOOM
 
 			#include "UnityCG.cginc"
@@ -80,6 +85,9 @@ Shader "Mask/Merge"
 
 			sampler2D _BirdMask;
 			sampler2D _Background;
+
+			float _FogExponent;
+			float4 _FogColor;
 
 			void Compare(inout float depthOutline, inout float normalOutline, float baseDepth, float3 baseNormal, float2 uv, float2 offset) {
 				//read neighbor pixel
@@ -132,7 +140,7 @@ Shader "Mask/Merge"
 					float4 glow = tex2D(_GlowMap, i.uv);
 					// return glow;
 					if(glow.a == 0) {
-						int NumberOfIterations = 9;
+						int NumberOfIterations = 3;
 						
 						//split texel size into smaller words
 						float TX_x = _GlowMap_TexelSize.x;
@@ -238,6 +246,13 @@ Shader "Mask/Merge"
 					// 		return float4(tex2D(_Background, i.uv + float2(_Time.x, _Time.x)).rgb, birdMask.b);
 				// 	}
 				// #endif
+
+				#if FOG
+					float fogStrength = SAMPLE_DEPTH_TEXTURE(_CameraDepthTexture, i.uv);
+					fogStrength = 1 - fogStrength;
+					fogStrength = saturate(pow(fogStrength, _FogExponent));
+					output = (1 - fogStrength) * output + fogStrength * _FogColor;
+				#endif
 
 				return output;
 			}

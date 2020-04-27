@@ -9,27 +9,24 @@ EditorBuildSettings:
     path: Assets/Scenes/Puzzles/Intro.unity
     guid: 088df1e19900e56468ba8b77fe596783
   - enabled: 1
-    path: Assets/Scenes/Puzzles/Bridge.unity
-    guid: 1babcd0f8e8346749a86fdad4d711741
-  - enabled: 1
-    path: Assets/Scenes/Puzzles/Disappear.unity
-    guid: 5a15d201ef67e01448519f6b23b36853
+    path: Assets/Scenes/Puzzles/BridgeRedo.unity
+    guid: dfe5142f589d0429c82c36723b35d3dd
   - enabled: 1
     path: Assets/Scenes/Puzzles/SimpleGate.unity
     guid: 9c4843441f696a74ea053066baf0afac
   - enabled: 1
-    path: Assets/Scenes/Puzzles/Swap.unity
-    guid: da97c78cbe376e34ca1bfbac769987e2
-  - enabled: 1
-    path: Assets/Scenes/Puzzles/OneCut.unity
-    guid: e74f3b502bd3518429f2fe49a50b90f5
+    path: Assets/Scenes/Puzzles/OneCutRedo.unity
+    guid: 429a1a38fb79d214b9492265aef80d48
   - enabled: 1
     path: Assets/Scenes/Puzzles/ComplexGate.unity
     guid: b6574156660414b4faaf6c9580e103f7
   - enabled: 1
-    path: Assets/Scenes/Puzzles/HalfCut.unity
-    guid: 0da7a8031dc275c4b97afdd23e01a0da
+    path: Assets/Scenes/Puzzles/Pushable.unity
+    guid: e22b6c061b689844184ae1583ec3191e
   - enabled: 1
-    path: Assets/Scenes/Puzzles/AutumnFinal.unity
-    guid: aeb9c209729417846bae26d8b23dcae4
+    path: Assets/Scenes/Puzzles/BoxHalfCut.unity
+    guid: 35aa7842109d4d2498203af9075f5d86
+  - enabled: 1
+    path: Assets/Scenes/Test Run/End.unity
+    guid: fd05f0a057f006743abe0113b5078005
   m_configObjects: {}

@@ -4,6 +4,9 @@ using System.Collections.Generic;
 
 using UnityEngine;
 
+#if DEBUG
+[ExecuteInEditMode]
+#endif
 public class Effects : MonoBehaviour
 {
 	Fade fadeController;
@@ -13,16 +16,20 @@ public class Effects : MonoBehaviour
 	bool dissolveOn = false;
 	[SerializeField] Material defaultGlowMat = default;
 
+	[SerializeField, Range(0, 30)] float lightPower = 5;
+
 	void Awake()
 	{
+		Shader.SetGlobalFloat("_LightAttenBias", 30 - lightPower);
 		fadeController = GetComponent<Fade>();
 		waveController = GetComponent<Wave>();
 
 		ToggleMask(false);
-		ToggleEdgeOutline(outlineOn);
-		ToggleDissolve(dissolveOn);
+		ToggleEdgeOutline(false);//outlineOn
+        ToggleDissolve(dissolveOn);
 		ToggleBoil(true);
 		ToggleBird(true);
+        ToggleFog(false);
 	}
 
 	void Update()
@@ -43,6 +50,10 @@ public class Effects : MonoBehaviour
 			ToggleDissolve(dissolveOn = !dissolveOn);
 			print($"dissolve: {dissolveOn}");
 		}
+
+#if UNITY_EDITOR
+		Shader.SetGlobalFloat("_LightAttenBias", 30 - lightPower);
+#endif
 #endif
 	}
 
@@ -59,8 +70,9 @@ public class Effects : MonoBehaviour
 	public void ToggleBoil(bool on) => ToggleEffect(on, "BOIL");
 	public void ToggleWave(bool on) => ToggleEffect(on, "WAVE");
 	public void ToggleBird(bool on) => ToggleEffect(on, "BIRD");
+	public void ToggleFog(bool on) => ToggleEffect(on, "FOG");
 
-	public void StartFade(bool fadingIn, float dur) => fadeController.StartFade(fadingIn, dur);
+    public void StartFade(bool fadingIn, float dur) => fadeController.StartFade(fadingIn, dur);
 
 	// public void SetWave(float distance) => waveController.waveDistance = distance;
 	public void SetWave(float distance) => Player.Instance.mask.screenMat.SetFloat("_WaveDistance", distance);

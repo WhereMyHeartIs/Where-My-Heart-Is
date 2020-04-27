@@ -40,6 +40,7 @@ Material:
         m_Scale: {x: 1, y: 2}
         m_Offset: {x: 0, y: 0}
     m_Floats:
+    - _AttenExponent: 1
     - _BlotchMulti: 16
     - _BlotchSub: 4
     - _BorderWidth: 0.15

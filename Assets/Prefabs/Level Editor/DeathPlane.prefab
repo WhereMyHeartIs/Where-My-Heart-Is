@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4037872479478507742}
   - component: {fileID: 4037872479478507739}
+  - component: {fileID: -2704750858318183251}
   m_Layer: 0
   m_Name: DeathPlane
   m_TagString: Finish
@@ -39,3 +40,15 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4037872479478507743}
   m_Mesh: {fileID: 10209, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &-2704750858318183251
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4037872479478507743}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b9dc231efb2311b4fb29afa7ea0ba5a1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
