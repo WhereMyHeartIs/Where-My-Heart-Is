@@ -34,6 +34,8 @@ public class ApplyMask : MonoBehaviour
 
     [Header("Ripple Behavior")]
     public float rippleLength;
+    public float rippleTarget;
+    public AnimationCurve rippleCurve;
 
     [HideInInspector] public RenderTexture mask;
     private Texture2D mask2D;
@@ -140,12 +142,12 @@ public class ApplyMask : MonoBehaviour
 	{
         if (rippleInProgress)
         {
-            float t = (Time.time - rippleStartTime) / rippleLength;
-            if (t < 1.1)
+            //float t = () / rippleLength;
+            if (Time.time - rippleStartTime < rippleLength)
             {
-                if (t > 0)
+                if (Time.time - rippleStartTime > 0)
                 {
-                    rippleMat.SetFloat("_Offset", Mathf.Lerp(0, 10, t));
+                    rippleMat.SetFloat("_Offset", rippleCurve.Evaluate((Time.time - rippleStartTime)/rippleLength) * rippleTarget);
                 }
             }
             else

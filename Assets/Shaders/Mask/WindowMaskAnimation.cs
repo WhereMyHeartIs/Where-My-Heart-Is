@@ -11,6 +11,7 @@ public class WindowMaskAnimation : MonoBehaviour
     public float rampLength;
     public float rampTimeOffset;
     public float rampTarget;
+    public AnimationCurve rampCurve;
 
     [Header("Breath Effect Behavior")]
     public float breathMax;
@@ -49,12 +50,13 @@ public class WindowMaskAnimation : MonoBehaviour
     {
         if (openingWindow)
         {
-            float t = (Time.time - rampStartTime) / rampLength;
-            if (t < 1.1)
+            if (Time.time - rampStartTime < rampLength)
             {
-                if (t > 0)
+                if (Time.time - rampStartTime > 0)
                 {
-                    openMat.SetFloat("_Cutoff", Mathf.Lerp(0, rampTarget, t));
+                    
+                    //openMat.SetFloat("_Cutoff", ConcreteEaseMethods.QuadEaseOut(Time.time - rampStartTime, 0, rampTarget, rampLength));
+                    openMat.SetFloat("_Cutoff", rampCurve.Evaluate(Time.time - rampStartTime/rampLength) * rampTarget);
                     Graphics.Blit(applyMask.mask, rampResult, openMat);
                     applyMask.SetMask(rampResult);
                 }
@@ -62,7 +64,8 @@ public class WindowMaskAnimation : MonoBehaviour
             else
             {
                 openingWindow = false;
-                currentBreath = Mathf.Lerp(0, rampTarget, t);
+                //currentBreath = ConcreteEaseMethods.QuadEaseOut(Time.time - rampStartTime, 0, rampTarget, rampLength);
+                currentBreath = rampCurve.Evaluate(Time.time - rampStartTime / rampLength) * rampTarget;
             }
         }
         else
